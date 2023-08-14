@@ -1,8 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/max-weis/go-asyncapi-validator/pkg/validator"
+	"os"
 )
 
 func main() {
@@ -21,12 +23,10 @@ func main() {
 	}
 
 	// Sample JSON data you want to validate
-	jsonData := struct {
-		Name string `json:"name"`
-		Age  int    `json:"age"`
-	}{
-		Name: "Joe",
-		Age:  38,
+	jsonData, err := loadFile("./example.json")
+	if err != nil {
+		fmt.Printf("Failed to example json: %s", err)
+		return
 	}
 
 	// Validate
@@ -37,4 +37,14 @@ func main() {
 	}
 
 	fmt.Println("Validation succeeded!")
+}
+
+func loadFile(path string) (interface{}, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	var file interface{}
+	err = json.Unmarshal(data, &file)
+	return file, err
 }

@@ -31,13 +31,13 @@ func main() {
 	}
 
 	// Extract Schema using JSON Path
-	schema, err := validator.ExtractSchemaWithJSONPath(spec, *pathToJson)
+	schema, err := validator.ExtractSchemaWithJSONPath(spec, *jsonPath)
 	if err != nil {
 		log.Fatalf("Failed to extract schema: %s", err)
 	}
 
 	// Load JSON data from provided path
-	jsonData, err := loadFile(*jsonPath)
+	jsonData, err := loadFile(*pathToJson)
 	if err != nil {
 		log.Fatalf("Failed to load JSON data: %s", err)
 	}
@@ -47,7 +47,7 @@ func main() {
 		log.Fatalf("Validation failed: %s", err)
 	}
 
-	fmt.Println("Validation succeeded!")
+	fmt.Println("the provided JSON is valid")
 }
 
 func loadFile(path string) (interface{}, error) {
