@@ -3,6 +3,7 @@ module github.com/max-weis/go-asyncapi-validator
 go 1.21
 
 require (
+	github.com/google/go-cmp v0.5.9
 	github.com/oliveagle/jsonpath v0.0.0-20180606110733-2e52cf6e6852
 	github.com/xeipuuv/gojsonschema v1.2.0
 )
