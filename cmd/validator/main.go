@@ -25,7 +25,7 @@ func main() {
 	}
 
 	// Load AsyncAPI Spec
-	spec, err := validator.LoadAsyncAPISpec(*pathToSpec)
+	spec, err := validator.LoadAsyncAPISpecFromFile(*pathToSpec)
 	if err != nil {
 		log.Fatalf("Failed to load AsyncAPI spec: %s", err)
 	}

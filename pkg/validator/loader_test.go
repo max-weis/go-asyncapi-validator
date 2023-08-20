@@ -27,7 +27,7 @@ func TestLoadAsyncAPISpec(t *testing.T) {
 	}
 
 	t.Run("load valid AsyncAPI spec", func(t *testing.T) {
-		spec, err := validator.LoadAsyncAPISpec(tempFile.Name())
+		spec, err := validator.LoadAsyncAPISpecFromFile(tempFile.Name())
 		if err != nil {
 			t.Fatalf("Expected no error but got %s", err)
 		}
@@ -44,7 +44,7 @@ func TestLoadAsyncAPISpec(t *testing.T) {
 	})
 
 	t.Run("load invalid path", func(t *testing.T) {
-		_, err := validator.LoadAsyncAPISpec("invalid_path.json")
+		_, err := validator.LoadAsyncAPISpecFromFile("invalid_path.json")
 		if err == nil {
 			t.Errorf("Expected error for invalid path but got nil")
 		}

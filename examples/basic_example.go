@@ -9,7 +9,7 @@ import (
 
 func main() {
 	// Load AsyncAPI Spec
-	spec, err := validator.LoadAsyncAPISpec("./spec.json")
+	spec, err := validator.LoadAsyncAPISpecFromFile("./spec.json")
 	if err != nil {
 		fmt.Printf("Failed to load AsyncAPI spec: %s", err)
 		return
