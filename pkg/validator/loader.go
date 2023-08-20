@@ -48,7 +48,7 @@ func LoadAsyncAPISpecFromFile(path string) (interface{}, error) {
 //     (e.g., malformed JSON, unexpected data types).
 //  4. Ensure that the provided path is either an absolute path or relative to the current working directory of the executable.
 func LoadAsyncAPISpec(spec string) (interface{}, error) {
-	var doc interface{}
+	var doc map[string]interface{}
 	err := json.Unmarshal([]byte(spec), &doc)
-	return spec, err
+	return doc, err
 }
