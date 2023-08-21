@@ -1,9 +1,33 @@
 package validator
 
 import (
+	"errors"
 	"fmt"
 	"github.com/xeipuuv/gojsonschema"
 )
+
+type ValidationError struct {
+	error
+	Errs []error
+}
+
+func newValidationError(err string) ValidationError {
+	return ValidationError{error: errors.New(err), Errs: make([]error, 0)}
+}
+
+func (v *ValidationError) AddErr(err string) {
+	v.Errs = append(v.Errs, errors.New(err))
+}
+
+func (v *ValidationError) PrettyPrint() string {
+	var message string
+
+	for _, err := range v.Errs {
+		message += fmt.Sprintf("\n- %s", err)
+	}
+
+	return message
+}
 
 // ValidateJSONAgainstSchema checks if the provided JSON data adheres to a given schema.
 //
@@ -34,11 +58,11 @@ func ValidateJSONAgainstSchema(jsonData interface{}, schema interface{}) error {
 	}
 
 	if !result.Valid() {
+		validationErr := newValidationError("json is not valid")
 		for _, err := range result.Errors() {
-			// TODO: dont print the error, but nest it inside the return error
-			fmt.Printf("- %s\n", err)
+			validationErr.AddErr(err.String())
 		}
-		return fmt.Errorf("json is not valid")
+		return validationErr
 	}
 
 	return nil

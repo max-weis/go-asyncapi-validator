@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/max-weis/go-asyncapi-validator/pkg/validator"
 	"os"
@@ -33,6 +34,14 @@ func main() {
 	err = validator.ValidateJSONAgainstSchema(jsonData, schema)
 	if err != nil {
 		fmt.Printf("Validation failed: %s", err)
+		var e validator.ValidationError
+		ok := errors.As(err, &e)
+		if !ok {
+			return
+		}
+
+		fmt.Println(e.PrettyPrint())
+
 		return
 	}
 

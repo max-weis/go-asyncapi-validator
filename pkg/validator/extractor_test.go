@@ -21,6 +21,13 @@ func TestExtractSchemaWithJSONPath(t *testing.T) {
 				},
 			},
 		},
+		"components": map[string]interface{}{
+			"schemas": map[string]interface{}{
+				"testSchema": map[string]interface{}{
+					"type": "object",
+				},
+			},
+		},
 	}
 
 	t.Run("Extract title", func(t *testing.T) {

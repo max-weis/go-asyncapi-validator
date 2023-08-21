@@ -61,6 +61,5 @@ the provided JSON is valid
 Otherwise, it will print validation errors.
 
 ## TODOs:
-- derefrencing
 - DSL instead of jsonpath
 - one struct that does it all
