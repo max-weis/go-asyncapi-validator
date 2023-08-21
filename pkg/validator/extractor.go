@@ -8,7 +8,7 @@ import (
 	"github.com/oliveagle/jsonpath"
 )
 
-func ExtractSchemaWithJSONPath(spec map[string]interface{}, query string) (interface{}, error) {
+func ExtractSchemaWithJSONPath(spec AsyncAPI, query string) (interface{}, error) {
 	value, err := jsonpath.JsonPathLookup(spec, query)
 	if err != nil {
 		return nil, err
@@ -46,4 +46,35 @@ func ExtractSchemaWithJSONPath(spec map[string]interface{}, query string) (inter
 	}
 
 	return derefSchema, nil
+}
+
+type Builder struct {
+	pathSegments []string
+}
+
+func NewBuilder() *Builder {
+	return &Builder{
+		pathSegments: []string{"$"},
+	}
+}
+
+func (b *Builder) Channels(key string) *Builder {
+	b.pathSegments = append(b.pathSegments, "channels", key)
+	return b
+}
+
+func (b *Builder) Subscribe() *Builder {
+	b.pathSegments = append(b.pathSegments, "subscribe")
+	return b
+}
+
+func (b *Builder) Publish() *Builder {
+	b.pathSegments = append(b.pathSegments, "publish")
+	return b
+}
+
+func (b *Builder) Payload() string {
+	b.pathSegments = append(b.pathSegments, "message")
+	b.pathSegments = append(b.pathSegments, "payload")
+	return strings.Join(b.pathSegments, ".")
 }

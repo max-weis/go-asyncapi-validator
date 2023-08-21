@@ -15,7 +15,10 @@ func main() {
 		return
 	}
 
-	schema, err := validator.ExtractSchemaWithJSONPath(spec, "$.channels.personUpdates.subscribe.message.payload")
+	// or use json path
+	// query := "$.channels.personUpdates.subscribe.message.payload"
+	query := validator.NewBuilder().Channels("personUpdates").Subscribe().Payload()
+	schema, err := validator.ExtractSchemaWithJSONPath(spec, query)
 	if err != nil {
 		fmt.Printf("Failed to extract schema: %s", err)
 		return
