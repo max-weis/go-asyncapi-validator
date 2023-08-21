@@ -2,33 +2,33 @@ package validator
 
 import (
 	"encoding/json"
+	"gopkg.in/yaml.v3"
 	"os"
 )
 
 // LoadAsyncAPISpecFromFile loads and parses an AsyncAPI specification from a given file path.
 //
 // Parameters:
-//   - path: The path to the file containing the AsyncAPI specification, in JSON format.
+//   - path: The path to the file containing the AsyncAPI specification, in YAML/JSON format.
 //
 // Returns:
 //   - A generic interface{} representing the parsed AsyncAPI specification.
-//   - An error if there are issues reading the file or parsing the contained JSON.
+//   - An error if there are issues reading the file or parsing the contained YAML/JSON.
 //
 // Important considerations:
-//  1. The function expects the file at the provided path to contain a valid JSON representation of an AsyncAPI spec.
+//  1. The function expects the file at the provided path to contain a valid YAML/JSON representation of an AsyncAPI spec.
 //  2. The returned interface{} is typically a map[string]interface{} for JSON objects or a slice for JSON arrays.
 //     Type assertion might be necessary based on the structure of your AsyncAPI spec.
-//  3. Errors might arise from file access issues (e.g., file not found, permission issues) or JSON parsing issues
-//     (e.g., malformed JSON, unexpected data types).
+//  3. Errors might arise from file access issues (e.g., file not found, permission issues) or YAML/JSON parsing issues
+//     (e.g., malformed YAML/JSON, unexpected data types).
 //  4. Ensure that the provided path is either an absolute path or relative to the current working directory of the executable.
-func LoadAsyncAPISpecFromFile(path string) (interface{}, error) {
+func LoadAsyncAPISpecFromFile(path string) (map[string]any, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
-	var spec interface{}
-	err = json.Unmarshal(data, &spec)
-	return spec, err
+
+	return unmarshalIntoMap([]byte(data))
 }
 
 // LoadAsyncAPISpec loads and parses an AsyncAPI specification from the given spec.
@@ -38,17 +38,26 @@ func LoadAsyncAPISpecFromFile(path string) (interface{}, error) {
 //
 // Returns:
 //   - A generic interface{} representing the parsed AsyncAPI specification.
-//   - An error if there are issues reading the file or parsing the contained JSON.
+//   - An error if there are issues reading the file or parsing the contained YAML/JSON.
 //
 // Important considerations:
-//  1. The function expects the file at the provided path to contain a valid JSON representation of an AsyncAPI spec.
+//  1. The function expects the file at the provided path to contain a valid YAML/JSON representation of an AsyncAPI spec.
 //  2. The returned interface{} is typically a map[string]interface{} for JSON objects or a slice for JSON arrays.
 //     Type assertion might be necessary based on the structure of your AsyncAPI spec.
-//  3. Errors might arise from file access issues (e.g., file not found, permission issues) or JSON parsing issues
-//     (e.g., malformed JSON, unexpected data types).
+//  3. Errors might arise from file access issues (e.g., file not found, permission issues) or YAML/JSON parsing issues
+//     (e.g., malformed YAML/JSON, unexpected data types).
 //  4. Ensure that the provided path is either an absolute path or relative to the current working directory of the executable.
-func LoadAsyncAPISpec(spec string) (interface{}, error) {
+func LoadAsyncAPISpec(spec string) (map[string]any, error) {
+	return unmarshalIntoMap([]byte(spec))
+}
+
+func unmarshalIntoMap(spec []byte) (map[string]any, error) {
 	var doc map[string]interface{}
-	err := json.Unmarshal([]byte(spec), &doc)
-	return doc, err
+	if err := json.Unmarshal(spec, &doc); err != nil {
+		if err := yaml.Unmarshal(spec, &doc); err != nil {
+			return nil, err
+		}
+	}
+
+	return doc, nil
 }

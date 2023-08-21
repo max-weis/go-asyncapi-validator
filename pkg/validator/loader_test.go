@@ -3,25 +3,21 @@ package validator_test
 import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/max-weis/go-asyncapi-validator/pkg/validator"
-	"io/ioutil"
 	"os"
 	"testing"
 )
 
 func TestLoadAsyncAPISpecFromFile(t *testing.T) {
-	// Setup a temporary file for testing
-	tempFile, err := ioutil.TempFile("", "asyncapi_*.json")
+	tempFile, err := os.CreateTemp("", "asyncapi_*.json")
 	if err != nil {
 		t.Fatalf("Failed to create temp file: %s", err)
 	}
 	defer os.Remove(tempFile.Name())
 
-	mockSpec := `{
-		"info": {
-			"title": "Test API",
-			"version": "1.0"
-		}
-	}`
+	mockSpec := `
+info:
+  title: Test API
+  version: "1.0"`
 	if _, err := tempFile.Write([]byte(mockSpec)); err != nil {
 		t.Fatalf("Failed to write to temp file: %s", err)
 	}
@@ -77,7 +73,7 @@ func TestLoadAsyncAPISpec(t *testing.T) {
 	})
 
 	t.Run("load invalid AsyncAPI spec", func(t *testing.T) {
-		invalidSpec := `{ "info": "Test API" ` // Incomplete JSON
+		invalidSpec := `{ "info": "Test API" `
 
 		_, err := validator.LoadAsyncAPISpec(invalidSpec)
 		if err == nil {
