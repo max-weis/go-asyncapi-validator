@@ -5,32 +5,35 @@ import (
 	"errors"
 	"fmt"
 	"github.com/max-weis/go-asyncapi-validator/pkg/validator"
+
 	"os"
 )
 
 func main() {
-	spec, err := validator.LoadAsyncAPISpecFromFile("./spec.json")
+	spec, err := os.ReadFile("./spec.json")
 	if err != nil {
 		fmt.Printf("Failed to load AsyncAPI spec: %s", err)
+		return
+	}
+
+	file, err := os.ReadFile("./example.json")
+	if err != nil {
+		fmt.Printf("Failed to load json: %s", err)
+		return
+	}
+
+	var obj interface{}
+	if err = json.Unmarshal(file, &obj); err != nil {
+		fmt.Printf("Failed to parse json: %s", err)
 		return
 	}
 
 	// or use json path
 	// query := "$.channels.personUpdates.subscribe.message.payload"
 	query := validator.NewBuilder().Channels("personUpdates").Subscribe().Payload()
-	schema, err := validator.ExtractSchemaWithJSONPath(spec, query)
+	v := validator.NewValidator(string(spec), query)
+	ok, err := v.Validate(obj)
 	if err != nil {
-		fmt.Printf("Failed to extract schema: %s", err)
-		return
-	}
-
-	jsonData, err := loadFile("./example.json")
-	if err != nil {
-		fmt.Printf("Failed to example json: %s", err)
-		return
-	}
-
-	if err = validator.ValidateJSONAgainstSchema(jsonData, schema); err != nil {
 		fmt.Printf("Validation failed: %s", err)
 		var e validator.ValidationError
 		ok := errors.As(err, &e)
@@ -43,15 +46,7 @@ func main() {
 		return
 	}
 
-	fmt.Println("Validation succeeded!")
-}
-
-func loadFile(path string) (interface{}, error) {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return nil, err
+	if ok {
+		fmt.Println("Validation succeeded!")
 	}
-	var file interface{}
-	err = json.Unmarshal(data, &file)
-	return file, err
 }

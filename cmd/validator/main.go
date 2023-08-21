@@ -31,7 +31,7 @@ func main() {
 	}
 
 	// Extract Schema using JSON Path
-	schema, err := validator.ExtractSchemaWithJSONPath(spec, *jsonPath)
+	schema, err := validator.extractSchemaWithJSONPath(spec, *jsonPath)
 	if err != nil {
 		log.Fatalf("Failed to extract schema: %s", err)
 	}
@@ -43,7 +43,7 @@ func main() {
 	}
 
 	// Validate
-	if err = validator.ValidateJSONAgainstSchema(jsonData, schema); err != nil {
+	if err = validator.validateJSONAgainstSchema(jsonData, schema); err != nil {
 		log.Fatalf("Validation failed: %s", err)
 	}
 

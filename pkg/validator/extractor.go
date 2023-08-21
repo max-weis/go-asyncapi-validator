@@ -8,7 +8,7 @@ import (
 	"github.com/oliveagle/jsonpath"
 )
 
-func ExtractSchemaWithJSONPath(spec AsyncAPI, query string) (interface{}, error) {
+func extractSchemaWithJSONPath(spec AsyncAPI, query string) (interface{}, error) {
 	value, err := jsonpath.JsonPathLookup(spec, query)
 	if err != nil {
 		return nil, err
@@ -42,7 +42,7 @@ func ExtractSchemaWithJSONPath(spec AsyncAPI, query string) (interface{}, error)
 	}
 
 	if _, hasRef := derefSchema["$ref"]; hasRef {
-		return ExtractSchemaWithJSONPath(spec, fmt.Sprintf("$.components.schemas.%s", schemaName))
+		return extractSchemaWithJSONPath(spec, fmt.Sprintf("$.components.schemas.%s", schemaName))
 	}
 
 	return derefSchema, nil

@@ -1,10 +1,9 @@
-package validator_test
+package validator
 
 import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/max-weis/go-asyncapi-validator/pkg/validator"
 )
 
 func TestValidateJSONAgainstSchema(t *testing.T) {
@@ -31,13 +30,13 @@ func TestValidateJSONAgainstSchema(t *testing.T) {
 	}
 
 	t.Run("valid JSON", func(t *testing.T) {
-		if err := validator.ValidateJSONAgainstSchema(validJSON, validSchema); err != nil {
+		if err := validateJSONAgainstSchema(validJSON, validSchema); err != nil {
 			t.Errorf("Expected no error but got %s", err)
 		}
 	})
 
 	t.Run("invalid JSON", func(t *testing.T) {
-		err := validator.ValidateJSONAgainstSchema(invalidJSON, validSchema)
+		err := validateJSONAgainstSchema(invalidJSON, validSchema)
 		if err == nil {
 			t.Error("Expected an error for invalid JSON but got nil")
 		} else if diff := cmp.Diff("json is not valid", err.Error()); diff != "" {

@@ -1,8 +1,7 @@
-package validator_test
+package validator
 
 import (
 	"github.com/google/go-cmp/cmp"
-	"github.com/max-weis/go-asyncapi-validator/pkg/validator"
 	"testing"
 )
 
@@ -33,7 +32,7 @@ func TestExtractSchemaWithJSONPath(t *testing.T) {
 	t.Run("Extract title", func(t *testing.T) {
 		query := "$.info.title"
 		expectedResult := "Test API"
-		result1, err1 := validator.ExtractSchemaWithJSONPath(mockSpec, query)
+		result1, err1 := extractSchemaWithJSONPath(mockSpec, query)
 		if err1 != nil {
 			t.Errorf("Expected no error but got %s", err1)
 		}
@@ -45,7 +44,7 @@ func TestExtractSchemaWithJSONPath(t *testing.T) {
 	t.Run("Extract payload", func(t *testing.T) {
 		query := "$.channels.userUpdates.publish.message.payload"
 		expectedResult := "sample payload"
-		result2, err2 := validator.ExtractSchemaWithJSONPath(mockSpec, query)
+		result2, err2 := extractSchemaWithJSONPath(mockSpec, query)
 		if err2 != nil {
 			t.Errorf("Expected no error but got %s", err2)
 		}
@@ -57,7 +56,7 @@ func TestExtractSchemaWithJSONPath(t *testing.T) {
 	t.Run("Invalid path", func(t *testing.T) {
 		query := "$.invalid.path"
 		expectedError := "key error: invalid not found in object"
-		_, err3 := validator.ExtractSchemaWithJSONPath(mockSpec, query)
+		_, err3 := extractSchemaWithJSONPath(mockSpec, query)
 		if err3 == nil || err3.Error() != expectedError {
 			t.Errorf("Expected error '%s' but got '%v'", expectedError, err3)
 		}
